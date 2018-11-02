@@ -1,6 +1,6 @@
 package com.ranze.likechat.web.controller;
 
-import com.ranze.likechat.web.exception.UserExistsException;
+import com.ranze.likechat.web.exception.CellPhoneExistsException;
 import com.ranze.likechat.web.result.Result;
 import com.ranze.likechat.web.entity.UserInfo;
 import com.ranze.likechat.web.result.ResultStatEnum;
@@ -24,9 +24,6 @@ public class UserInfoController {
 
     @PostMapping("/create")
     public Result<UserInfo> create(@RequestBody @Valid UserInfo userInfo, BindingResult errorResult) {
-        if (userInfo == null) {
-            return Result.failure(ResultStatEnum.USER_EXISTS);
-        }
         if (errorResult.hasErrors()) {
             log.warn("UserInfo has error: {}", errorResult.getAllErrors());
             return Result.failure(ResultStatEnum.PARAMETER_ERROR);
@@ -35,8 +32,8 @@ public class UserInfoController {
         UserInfo user = null;
         try {
             user = userInfoServiceImpl.createUser(userInfo);
-        } catch (UserExistsException e) {
-            return Result.failure(ResultStatEnum.USER_EXISTS);
+        } catch (CellPhoneExistsException e) {
+            return Result.failure(ResultStatEnum.CELL_PHONE_EXISTS);
         }
         return Result.success(user);
     }

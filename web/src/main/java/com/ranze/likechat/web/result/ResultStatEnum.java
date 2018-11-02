@@ -4,8 +4,7 @@ public enum ResultStatEnum {
     SUCCESS(0, "success"),
     INNER_ERROR(1, "inner error"),
     PARAMETER_ERROR(2, "Parameter error"),
-    USER_EXISTS(100, "user already exists");
-
+    CELL_PHONE_EXISTS(100, "手机号已经被注册");
 
     private int state;
 

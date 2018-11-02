@@ -11,6 +11,8 @@ public interface UserInfoMapper {
 
     UserInfo selectByPrimaryKey(Long id);
 
+    UserInfo selectByCellPhoneNum(String cellPhoneNum);
+
     int updateByPrimaryKeySelective(UserInfo record);
 
     int updateByPrimaryKeyWithBLOBs(UserInfo record);

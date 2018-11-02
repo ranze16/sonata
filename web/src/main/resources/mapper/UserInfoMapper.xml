@@ -49,6 +49,14 @@
     from user_info
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByCellPhoneNum" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_info
+    where cell_phone_num = #{cellPhoneNum,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from user_info
     where id = #{id,jdbcType=BIGINT}
