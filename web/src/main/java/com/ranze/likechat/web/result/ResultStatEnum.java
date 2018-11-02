@@ -3,7 +3,8 @@ package com.ranze.likechat.web.result;
 public enum ResultStatEnum {
     SUCCESS(0, "success"),
     INNER_ERROR(1, "inner error"),
-    USER_EXISTS(2, "user already exists");
+    PARAMETER_ERROR(2, "Parameter error"),
+    USER_EXISTS(100, "user already exists");
 
 
     private int state;
