@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ranze.likechat.web.mapper.UserInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.ranze.likechat.web.entity.UserInfo" >
+    <constructor >
+      <idArg column="id" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="gmt_create" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="gmt_modified" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="nick_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="sex" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="birth_date" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="cell_phone_num" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="living_country" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="living_province" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="living_city" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="signature" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.ranze.likechat.web.entity.UserInfo" >
+    <constructor >
+      <idArg column="id" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="gmt_create" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="gmt_modified" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="nick_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="sex" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="birth_date" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="cell_phone_num" jdbcType="CHAR" javaType="java.lang.String" />
+      <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="living_country" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="living_province" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="living_city" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="signature" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="head_portrait" jdbcType="LONGVARBINARY" javaType="_byte[]" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, gmt_create, gmt_modified, nick_name, sex, birth_date, cell_phone_num, password, 
+    living_country, living_province, living_city, signature
+  </sql>
+  <sql id="Blob_Column_List" >
+    head_portrait
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from user_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+    insert into user_info (id, gmt_create, gmt_modified, 
+      nick_name, sex, birth_date, 
+      cell_phone_num, password, living_country, 
+      living_province, living_city, signature, 
+      head_portrait)
+    values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
+      #{nickName,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{birthDate,jdbcType=TIMESTAMP}, 
+      #{cellPhoneNum,jdbcType=CHAR}, #{password,jdbcType=VARCHAR}, #{livingCountry,jdbcType=VARCHAR}, 
+      #{livingProvince,jdbcType=VARCHAR}, #{livingCity,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR}, 
+      #{headPortrait,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+    insert into user_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create,
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified,
+      </if>
+      <if test="nickName != null" >
+        nick_name,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="birthDate != null" >
+        birth_date,
+      </if>
+      <if test="cellPhoneNum != null" >
+        cell_phone_num,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="livingCountry != null" >
+        living_country,
+      </if>
+      <if test="livingProvince != null" >
+        living_province,
+      </if>
+      <if test="livingCity != null" >
+        living_city,
+      </if>
+      <if test="signature != null" >
+        signature,
+      </if>
+      <if test="headPortrait != null" >
+        head_portrait,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nickName != null" >
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=CHAR},
+      </if>
+      <if test="birthDate != null" >
+        #{birthDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cellPhoneNum != null" >
+        #{cellPhoneNum,jdbcType=CHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="livingCountry != null" >
+        #{livingCountry,jdbcType=VARCHAR},
+      </if>
+      <if test="livingProvince != null" >
+        #{livingProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="livingCity != null" >
+        #{livingCity,jdbcType=VARCHAR},
+      </if>
+      <if test="signature != null" >
+        #{signature,jdbcType=VARCHAR},
+      </if>
+      <if test="headPortrait != null" >
+        #{headPortrait,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+    update user_info
+    <set >
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nickName != null" >
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="birthDate != null" >
+        birth_date = #{birthDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cellPhoneNum != null" >
+        cell_phone_num = #{cellPhoneNum,jdbcType=CHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="livingCountry != null" >
+        living_country = #{livingCountry,jdbcType=VARCHAR},
+      </if>
+      <if test="livingProvince != null" >
+        living_province = #{livingProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="livingCity != null" >
+        living_city = #{livingCity,jdbcType=VARCHAR},
+      </if>
+      <if test="signature != null" >
+        signature = #{signature,jdbcType=VARCHAR},
+      </if>
+      <if test="headPortrait != null" >
+        head_portrait = #{headPortrait,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+    update user_info
+    set gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=CHAR},
+      birth_date = #{birthDate,jdbcType=TIMESTAMP},
+      cell_phone_num = #{cellPhoneNum,jdbcType=CHAR},
+      password = #{password,jdbcType=VARCHAR},
+      living_country = #{livingCountry,jdbcType=VARCHAR},
+      living_province = #{livingProvince,jdbcType=VARCHAR},
+      living_city = #{livingCity,jdbcType=VARCHAR},
+      signature = #{signature,jdbcType=VARCHAR},
+      head_portrait = #{headPortrait,jdbcType=LONGVARBINARY}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+    update user_info
+    set gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=CHAR},
+      birth_date = #{birthDate,jdbcType=TIMESTAMP},
+      cell_phone_num = #{cellPhoneNum,jdbcType=CHAR},
+      password = #{password,jdbcType=VARCHAR},
+      living_country = #{livingCountry,jdbcType=VARCHAR},
+      living_province = #{livingProvince,jdbcType=VARCHAR},
+      living_city = #{livingCity,jdbcType=VARCHAR},
+      signature = #{signature,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
