@@ -1,4 +1,4 @@
-package com.ranze.likechat.web.util;
+package com.ranze.likechat.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

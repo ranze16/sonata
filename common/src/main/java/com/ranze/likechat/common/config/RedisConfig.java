@@ -1,4 +1,4 @@
-package com.ranze.likechat.web.config;
+package com.ranze.likechat.common.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

@@ -7,13 +7,10 @@ import com.ranze.likechat.web.exception.LikeChatException;
 import com.ranze.likechat.web.exception.WrongValidationCodeException;
 import com.ranze.likechat.web.mapper.UserInfoMapper;
 import com.ranze.likechat.web.result.ResultStatEnum;
-import com.ranze.likechat.web.util.RedisUtil;
+import com.ranze.likechat.common.RedisUtil;
 import com.ranze.likechat.web.util.SnowflakeIdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Random;
-import java.util.UUID;
 
 @Service
 public class UserInfoServiceImpl implements UserInfoService {

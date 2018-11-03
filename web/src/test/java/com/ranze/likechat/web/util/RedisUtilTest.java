@@ -1,5 +1,6 @@
 package com.ranze.likechat.web.util;
 
+import com.ranze.likechat.common.RedisUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
