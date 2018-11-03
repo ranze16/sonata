@@ -14,7 +14,7 @@ public class RedisUtil {
     public <T> void vSet(String key, T value, long expire) {
         redisTemplate.opsForValue().set(key, value);
         if (expire != -1) {
-            redisTemplate.expire(vGet(key), expire, TimeUnit.SECONDS);
+            redisTemplate.expire(key, expire, TimeUnit.SECONDS);
         }
     }
 

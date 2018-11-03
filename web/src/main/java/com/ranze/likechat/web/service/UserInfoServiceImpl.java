@@ -35,9 +35,10 @@ public class UserInfoServiceImpl implements UserInfoService {
                 redisUtil.vSet(redisKey, -1, 60);
                 // TODO: 2018/11/3 发送短信验证码
             } else {
-                int validationCode = redisUtil.vGet(redisKey);
+                // 如果键不存在或者已经过期，则validationCode为null，以验证码错误处理
+                Integer validationCode = redisUtil.vGet(redisKey);
                 redisUtil.del(redisKey);
-                if (validationCode != -1 && validationCode == userCreate.getValidationCode()) {
+                if (validationCode != null && validationCode != -1 && validationCode == userCreate.getValidationCode()) {
                     UserInfo userInfo = new UserInfo();
                     userInfo.setCellPhoneNum(cellPhoneNum);
                     userInfo.setNickName("");
