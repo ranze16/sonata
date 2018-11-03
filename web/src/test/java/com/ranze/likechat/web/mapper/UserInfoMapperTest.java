@@ -1,13 +1,11 @@
 package com.ranze.likechat.web.mapper;
 
-import com.ranze.likechat.web.entity.UserInfo;
+import com.ranze.likechat.web.entity.dataobject.UserInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

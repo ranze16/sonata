@@ -1,6 +1,6 @@
 package com.ranze.likechat.web.mapper;
 
-import com.ranze.likechat.web.entity.UserInfo;
+import com.ranze.likechat.web.entity.dataobject.UserInfo;
 
 public interface UserInfoMapper {
     int deleteByPrimaryKey(Long id);

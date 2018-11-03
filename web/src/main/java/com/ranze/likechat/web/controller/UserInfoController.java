@@ -1,8 +1,10 @@
 package com.ranze.likechat.web.controller;
 
+import com.ranze.likechat.web.entity.viewobject.UserCreate;
 import com.ranze.likechat.web.exception.CellPhoneExistsException;
+import com.ranze.likechat.web.exception.WrongValidationCodeException;
 import com.ranze.likechat.web.result.Result;
-import com.ranze.likechat.web.entity.UserInfo;
+import com.ranze.likechat.web.entity.dataobject.UserInfo;
 import com.ranze.likechat.web.result.ResultStatEnum;
 import com.ranze.likechat.web.service.UserInfoServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -23,19 +25,20 @@ public class UserInfoController {
     UserInfoServiceImpl userInfoServiceImpl;
 
     @PostMapping("/create")
-    public Result<UserInfo> create(@RequestBody @Valid UserInfo userInfo, BindingResult errorResult) {
+    public Result<Void> create(@RequestBody @Valid UserCreate userCreate, BindingResult errorResult) {
         if (errorResult.hasErrors()) {
             log.warn("UserInfo has error: {}", errorResult.getAllErrors());
             return Result.failure(ResultStatEnum.PARAMETER_ERROR);
         }
 
-        UserInfo user = null;
         try {
-            user = userInfoServiceImpl.createUser(userInfo);
+            userInfoServiceImpl.createUser(userCreate);
         } catch (CellPhoneExistsException e) {
             return Result.failure(ResultStatEnum.CELL_PHONE_EXISTS);
+        } catch (WrongValidationCodeException e) {
+            return Result.failure(ResultStatEnum.WRONG_VALIDATION_CODE);
         }
-        return Result.success(user);
+        return Result.success();
     }
 
 }

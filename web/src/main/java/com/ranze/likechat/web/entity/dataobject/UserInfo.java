@@ -1,4 +1,4 @@
-package com.ranze.likechat.web.entity;
+package com.ranze.likechat.web.entity.dataobject;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

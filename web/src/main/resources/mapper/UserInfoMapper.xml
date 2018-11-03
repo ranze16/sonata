@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ranze.likechat.web.mapper.UserInfoMapper" >
-  <resultMap id="BaseResultMap" type="com.ranze.likechat.web.entity.UserInfo" >
+  <resultMap id="BaseResultMap" type="com.ranze.likechat.web.entity.dataobject.UserInfo" >
     <constructor >
       <idArg column="id" jdbcType="BIGINT" javaType="java.lang.Long" />
       <arg column="gmt_create" jdbcType="TIMESTAMP" javaType="java.util.Date" />
@@ -17,7 +17,7 @@
       <arg column="signature" jdbcType="VARCHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.ranze.likechat.web.entity.UserInfo" >
+  <resultMap id="ResultMapWithBLOBs" type="com.ranze.likechat.web.entity.dataobject.UserInfo" >
     <constructor >
       <idArg column="id" jdbcType="BIGINT" javaType="java.lang.Long" />
       <arg column="gmt_create" jdbcType="TIMESTAMP" javaType="java.util.Date" />
@@ -61,7 +61,7 @@
     delete from user_info
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+  <insert id="insert" parameterType="com.ranze.likechat.web.entity.dataobject.UserInfo" >
     insert into user_info (id, gmt_create, gmt_modified, 
       nick_name, sex, birth_date, 
       cell_phone_num, password, living_country, 
@@ -73,7 +73,7 @@
       #{livingProvince,jdbcType=VARCHAR}, #{livingCity,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR}, 
       #{headPortrait,jdbcType=LONGVARBINARY})
   </insert>
-  <insert id="insertSelective" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+  <insert id="insertSelective" parameterType="com.ranze.likechat.web.entity.dataobject.UserInfo" >
     insert into user_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -158,7 +158,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.ranze.likechat.web.entity.dataobject.UserInfo" >
     update user_info
     <set >
       <if test="gmtCreate != null" >
@@ -200,7 +200,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ranze.likechat.web.entity.dataobject.UserInfo" >
     update user_info
     set gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
@@ -216,7 +216,7 @@
       head_portrait = #{headPortrait,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.ranze.likechat.web.entity.UserInfo" >
+  <update id="updateByPrimaryKey" parameterType="com.ranze.likechat.web.entity.dataobject.UserInfo" >
     update user_info
     set gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
