@@ -2,6 +2,7 @@ package com.ranze.likechat.web.controller;
 
 import com.ranze.likechat.web.entity.viewobject.UserCreate;
 import com.ranze.likechat.web.exception.CellPhoneExistsException;
+import com.ranze.likechat.web.exception.ExceedQpsLimitException;
 import com.ranze.likechat.web.exception.WrongValidationCodeException;
 import com.ranze.likechat.web.result.Result;
 import com.ranze.likechat.web.entity.dataobject.UserInfo;
@@ -37,6 +38,8 @@ public class UserInfoController {
             return Result.failure(ResultStatEnum.CELL_PHONE_EXISTS);
         } catch (WrongValidationCodeException e) {
             return Result.failure(ResultStatEnum.WRONG_VALIDATION_CODE);
+        } catch (ExceedQpsLimitException e) {
+            return Result.failure(ResultStatEnum.EXCEED_QPS_LIMIT);
         }
         return Result.success();
     }

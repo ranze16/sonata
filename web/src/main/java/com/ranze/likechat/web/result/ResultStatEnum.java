@@ -5,7 +5,8 @@ public enum ResultStatEnum {
     INNER_ERROR(1, "inner error"),
     PARAMETER_ERROR(2, "Parameter error"),
     CELL_PHONE_EXISTS(100, "手机号已经被注册"),
-    WRONG_VALIDATION_CODE(101, "验证码错误");
+    WRONG_VALIDATION_CODE(101, "验证码错误"),
+    EXCEED_QPS_LIMIT(102, "太频繁了，请稍后再试");
 
     private int state;
 

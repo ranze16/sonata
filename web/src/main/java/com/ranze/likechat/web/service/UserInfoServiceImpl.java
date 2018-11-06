@@ -1,18 +1,20 @@
 package com.ranze.likechat.web.service;
 
+import com.ranze.likechat.web.cons.Constants;
 import com.ranze.likechat.web.entity.dataobject.UserInfo;
 import com.ranze.likechat.web.entity.viewobject.UserCreate;
-import com.ranze.likechat.web.exception.CellPhoneExistsException;
-import com.ranze.likechat.web.exception.LikeChatException;
-import com.ranze.likechat.web.exception.WrongValidationCodeException;
+import com.ranze.likechat.web.exception.*;
 import com.ranze.likechat.web.mapper.UserInfoMapper;
 import com.ranze.likechat.web.result.ResultStatEnum;
 import com.ranze.likechat.common.RedisUtil;
+import com.ranze.likechat.web.util.SmsUtil;
 import com.ranze.likechat.web.util.SnowflakeIdWorker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     UserInfoMapper userInfoMapper;
@@ -20,9 +22,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     RedisUtil redisUtil;
     @Autowired
     SnowflakeIdWorker snowflakeIdWorker;
+    @Autowired
+    SmsUtil smsUtil;
 
     @Override
-    public void createUser(UserCreate userCreate) throws CellPhoneExistsException, WrongValidationCodeException {
+    public void createUser(UserCreate userCreate) throws CellPhoneExistsException, WrongValidationCodeException, ExceedQpsLimitException {
         String cellPhoneNum = userCreate.getCellPhoneNum();
         try {
             UserInfo user = userInfoMapper.selectByCellPhoneNum(cellPhoneNum);
@@ -32,8 +36,17 @@ public class UserInfoServiceImpl implements UserInfoService {
 
             String redisKey = "create_user:" + cellPhoneNum;
             if (userCreate.getValidationCode() == 0) {
-                redisUtil.vSet(redisKey, -1, 60);
-                // TODO: 2018/11/3 发送短信验证码
+                int code = (int) ((Math.random() * 9 + 1) * 100000);
+                long startSend = System.currentTimeMillis();
+                boolean sendSuccess = SmsUtil.sendValidationCode(cellPhoneNum, code + "");
+                log.info("Time for send validationCode: {}", System.currentTimeMillis() - startSend);
+
+                if (sendSuccess) {
+                    redisUtil.vSet(redisKey, code, Constants.FIVE_MINUTE_IN_SECONDS);
+                } else {
+                    throw new InnerErrorException(ResultStatEnum.INNER_ERROR);
+                }
+
             } else {
                 // 如果键不存在或者已经过期，则validationCode为null，以验证码错误处理
                 Integer validationCode = redisUtil.vGet(redisKey);
@@ -54,7 +67,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 }
 
             }
-        } catch (CellPhoneExistsException | WrongValidationCodeException e) {
+        } catch (CellPhoneExistsException | WrongValidationCodeException | ExceedQpsLimitException e) {
             throw e;
         } catch (Exception e) {
             throw new LikeChatException(e.getMessage(), e);
