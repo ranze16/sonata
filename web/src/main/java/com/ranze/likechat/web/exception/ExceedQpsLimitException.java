@@ -2,10 +2,10 @@ package com.ranze.likechat.web.exception;
 
 import com.ranze.likechat.web.result.ResultStatEnum;
 
-public class ExceedQpsLimitException extends Exception {
+public class ExceedQpsLimitException extends BaseException {
 
     public ExceedQpsLimitException(ResultStatEnum resultStatEnum) {
-        super(resultStatEnum.getMessage());
+        super(resultStatEnum);
     }
 
     public ExceedQpsLimitException(String message) {

@@ -34,12 +34,8 @@ public class UserInfoController {
 
         try {
             userInfoServiceImpl.createUser(userCreate);
-        } catch (CellPhoneExistsException e) {
-            return Result.failure(ResultStatEnum.CELL_PHONE_EXISTS);
-        } catch (WrongValidationCodeException e) {
-            return Result.failure(ResultStatEnum.WRONG_VALIDATION_CODE);
-        } catch (ExceedQpsLimitException e) {
-            return Result.failure(ResultStatEnum.EXCEED_QPS_LIMIT);
+        } catch (CellPhoneExistsException | WrongValidationCodeException | ExceedQpsLimitException e) {
+            return Result.failure(e.getResultStatEnum());
         }
         return Result.success();
     }

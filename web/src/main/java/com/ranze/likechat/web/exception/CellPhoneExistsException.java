@@ -2,10 +2,11 @@ package com.ranze.likechat.web.exception;
 
 import com.ranze.likechat.web.result.ResultStatEnum;
 
-public class CellPhoneExistsException extends Exception {
+public class CellPhoneExistsException extends BaseException {
     public CellPhoneExistsException(ResultStatEnum resultStatEnum) {
-        this(resultStatEnum.getMessage());
+        super(resultStatEnum);
     }
+
     public CellPhoneExistsException(String message) {
         super(message);
     }

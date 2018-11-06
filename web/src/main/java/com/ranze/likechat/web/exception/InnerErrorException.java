@@ -2,9 +2,9 @@ package com.ranze.likechat.web.exception;
 
 import com.ranze.likechat.web.result.ResultStatEnum;
 
-public class InnerErrorException extends Exception {
+public class InnerErrorException extends BaseException {
     public InnerErrorException(ResultStatEnum resultStatEnum) {
-        this(resultStatEnum.getMessage());
+        super(resultStatEnum);
     }
 
     public InnerErrorException(String message) {
