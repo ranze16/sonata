@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/userinfo")
+@RequestMapping("/user")
 @Slf4j
-public class UserInfoController {
+public class UserController {
     @Autowired
     UserInfoServiceImpl userInfoServiceImpl;
 
