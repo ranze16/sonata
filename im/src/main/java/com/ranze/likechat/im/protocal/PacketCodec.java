@@ -1,76 +1,63 @@
 package com.ranze.likechat.im.protocal;
 
 
-import com.ranze.likechat.im.protocal.request.LoginRequestPacket;
-import com.ranze.likechat.im.protocal.request.MessageRequestPacket;
-import com.ranze.likechat.im.protocal.response.LoginResponsePacket;
-import com.ranze.likechat.im.protocal.response.MessageResponsePacket;
-import com.ranze.likechat.im.serialize.Serializer;
-import com.ranze.likechat.im.serialize.impl.JSONSerializer;
+import com.google.protobuf.AbstractMessage;
+import com.ranze.likechat.im.proto.LoginProto;
+import com.ranze.likechat.im.serialize.ProtoSerializer;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.ranze.likechat.im.protocal.command.Command.*;
+import static com.ranze.likechat.im.protocal.command.Command.LOGIN_REQUEST;
+import static com.ranze.likechat.im.protocal.command.Command.LOGIN_RESPONSE;
 
 public class PacketCodec {
     public static final int MAGIC_NUMBER = 0x12345678;
+    private static final int version = 0x01;
 
     public static final PacketCodec INSTANCE = new PacketCodec();
 
-    private final Map<Byte, Class<? extends Packet>> packetTypeMap;
-    private final Map<Byte, Serializer> serializerMap;
+    private final Map<Class<? extends AbstractMessage>, Byte> messageTypeMap;
+
 
     private PacketCodec() {
-        packetTypeMap = new HashMap<Byte, Class<? extends Packet>>();
-        packetTypeMap.put(LOGIN_REQUEST, LoginRequestPacket.class);
-        packetTypeMap.put(LOGIN_RESPONSE, LoginResponsePacket.class);
-        packetTypeMap.put(MESSAGE_REQUEST, MessageRequestPacket.class);
-        packetTypeMap.put(MESSAGE_RESPONSE, MessageResponsePacket.class);
+        messageTypeMap = new HashMap<>();
+        messageTypeMap.put(LoginProto.LoginRequest.class, LOGIN_REQUEST);
+        messageTypeMap.put(LoginProto.LoginResponse.class, LOGIN_RESPONSE);
 
-        serializerMap = new HashMap<Byte, Serializer>();
-        Serializer serializer = new JSONSerializer();
-        serializerMap.put(serializer.getSerializerAlgorithm(), serializer);
     }
 
-    public void encode(ByteBuf byteBuf, Packet packet) {
-        byte[] bytes = Serializer.DEFAULT.serialize(packet);
+    public void encode(ByteBuf byteBuf, AbstractMessage message) {
+        byte[] bytes = ProtoSerializer.serialize(message);
 
         byteBuf.writeInt(MAGIC_NUMBER);
-        byteBuf.writeByte(packet.getVersion());
-        byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());
-        byteBuf.writeByte(packet.getCommand());
+        byteBuf.writeByte(version);
+        byteBuf.writeByte(getCommand(message.getClass()));
+
         byteBuf.writeInt(bytes.length);
         byteBuf.writeBytes(bytes);
     }
 
-    public Packet decode(ByteBuf byteBuf) {
+    public AbstractMessage decode(ByteBuf byteBuf) {
+        // 跳过魔数
         byteBuf.skipBytes(4);
+        // 跳过版本号
         byteBuf.skipBytes(1);
-
-        byte serializerAlgorithm = byteBuf.readByte();
+        // 指令
         byte command = byteBuf.readByte();
+
         int length = byteBuf.readInt();
         byte[] bytes = new byte[length];
         byteBuf.readBytes(bytes);
 
-
-        Class<? extends Packet> requestType = getRequestType(command);
-        Serializer serializer = getSerializer(serializerAlgorithm);
-
-        if (requestType != null && serializer != null) {
-            return serializer.deserialize(requestType, bytes);
-        }
-        return null;
+        return ProtoSerializer.deserialize(command, bytes);
 
     }
 
-    private Serializer getSerializer(byte serializerAlgorithm) {
-        return serializerMap.get(serializerAlgorithm);
+    private Byte getCommand(Class<? extends AbstractMessage> clazz) {
+        return messageTypeMap.get(clazz);
     }
 
-    private Class<? extends Packet> getRequestType(byte command) {
-        return packetTypeMap.get(command);
-    }
+
 }

@@ -5,7 +5,6 @@ import com.ranze.likechat.im.codec.PacketDecoder;
 import com.ranze.likechat.im.codec.PacketEncoder;
 import com.ranze.likechat.im.codec.Spliter;
 import com.ranze.likechat.im.server.handle.LoginRequestHandler;
-import com.ranze.likechat.im.server.handle.MessageRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -40,7 +39,6 @@ public class NettyServer {
                         nioSocketChannel.pipeline().addLast(new Spliter());
                         nioSocketChannel.pipeline().addLast(new PacketDecoder());
                         nioSocketChannel.pipeline().addLast(new LoginRequestHandler());
-                        nioSocketChannel.pipeline().addLast(new MessageRequestHandler());
                         nioSocketChannel.pipeline().addLast(new PacketEncoder());
                     }
                 });

@@ -2,11 +2,9 @@ package com.ranze.likechat.im.client;
 
 
 import com.ranze.likechat.im.client.handler.LoginResponseHandler;
-import com.ranze.likechat.im.client.handler.MessageResponseHandler;
 import com.ranze.likechat.im.codec.PacketDecoder;
 import com.ranze.likechat.im.codec.PacketEncoder;
 import com.ranze.likechat.im.codec.Spliter;
-import com.ranze.likechat.im.protocal.request.MessageRequestPacket;
 import com.ranze.likechat.im.util.LoginUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -41,7 +39,6 @@ public class NettyClient {
                         socketChannel.pipeline().addLast(new Spliter());
                         socketChannel.pipeline().addLast(new PacketDecoder());
                         socketChannel.pipeline().addLast(new LoginResponseHandler());
-                        socketChannel.pipeline().addLast(new MessageResponseHandler());
                         socketChannel.pipeline().addLast(new PacketEncoder());
                     }
                 });
@@ -74,7 +71,6 @@ public class NettyClient {
                     Scanner sc = new Scanner(System.in);
                     String line = sc.nextLine();
 
-                    channel.writeAndFlush(new MessageRequestPacket(line));
                 }
             }
         }).start();

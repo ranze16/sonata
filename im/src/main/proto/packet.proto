@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_package = "com.ranze.likechat.im.proto";
+option java_outer_classname = "PacketProto";
+
+import "request.proto";
+import "response.proto";
+
+enum Type {
+    Login_Request = 0x0000;
+    Login_Response = 0x0001;
+}
+
+message Packet {
+    Type type = 1;
+    Request request = 3;
+    Response response = 4;
+}

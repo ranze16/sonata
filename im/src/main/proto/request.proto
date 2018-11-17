@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "com.ranze.likechat.im.proto";
+option java_outer_classname = "RequestProto";
+
+import "login.proto";
+
+message Request {
+    LoginRequest loginRequest= 1;
+}
