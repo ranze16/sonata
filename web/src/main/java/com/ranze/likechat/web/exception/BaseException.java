@@ -2,7 +2,7 @@ package com.ranze.likechat.web.exception;
 
 import com.ranze.likechat.web.result.ResultStatEnum;
 
-public class BaseException extends Exception {
+public class BaseException extends RuntimeException {
     protected ResultStatEnum resultStatEnum;
 
     public BaseException(ResultStatEnum resultStatEnum) {

@@ -6,7 +6,9 @@ public enum ResultStatEnum {
     PARAMETER_ERROR(2, "Parameter error"),
     CELL_PHONE_EXISTS(100, "手机号已经被注册"),
     WRONG_VALIDATION_CODE(101, "验证码错误"),
-    EXCEED_QPS_LIMIT(102, "太频繁了，请稍后再试");
+    EXCEED_QPS_LIMIT(102, "太频繁了，请稍后再试"),
+    USER_NOT_EXISTS(103, "用户不存在或者密码错误"),
+    USER_NOT_LOGGED_IN(104, "未登录");
 
     private int state;
 

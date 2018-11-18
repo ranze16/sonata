@@ -1,21 +1,27 @@
 package com.ranze.likechat.web.service;
 
 import com.ranze.likechat.web.cons.Constants;
+import com.ranze.likechat.web.cons.RedisConstants;
 import com.ranze.likechat.web.entity.dataobject.UserInfo;
+import com.ranze.likechat.web.entity.viewobject.BasicUserInfo;
 import com.ranze.likechat.web.entity.viewobject.UserCreate;
+import com.ranze.likechat.web.entity.viewobject.UserLoginReq;
+import com.ranze.likechat.web.entity.viewobject.UserLoginResp;
 import com.ranze.likechat.web.exception.*;
 import com.ranze.likechat.web.mapper.UserInfoMapper;
 import com.ranze.likechat.web.result.ResultStatEnum;
 import com.ranze.likechat.common.RedisUtil;
 import com.ranze.likechat.web.util.SmsUtil;
 import com.ranze.likechat.web.util.SnowflakeIdWorker;
+import com.ranze.likechat.web.util.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
-public class UserInfoServiceImpl implements UserInfoService {
+public class UserServiceImpl implements UserService {
     @Autowired
     UserInfoMapper userInfoMapper;
     @Autowired
@@ -74,5 +80,45 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
 
     }
+
+    @Override
+    public UserLoginResp userLogin(UserLoginReq userLoginReq) {
+        String cellPhoneNum = userLoginReq.getCellPhoneNum();
+        UserInfo user = userInfoMapper.selectByCellPhoneNum(cellPhoneNum);
+        if (user == null) {
+            throw new UserNotExistsException(ResultStatEnum.USER_NOT_EXISTS);
+        }
+
+        if (!user.getPassword().equals(userLoginReq.getPassword())) {
+            throw new UserNotExistsException(ResultStatEnum.USER_NOT_EXISTS);
+        }
+
+        String usedToken = redisUtil.hGet(RedisConstants.KEY_LOGIN, cellPhoneNum);
+        if (!StringUtils.isEmpty(usedToken)) {
+            return new UserLoginResp(usedToken);
+        }
+
+        String token = UUIDUtil.getUUID();
+        redisUtil.hSet(RedisConstants.KEY_LOGIN, cellPhoneNum, token);
+        return new UserLoginResp(token);
+
+    }
+
+    @Override
+    public void userLogout(BasicUserInfo basicUserInfo) {
+        boolean logged = checkLoggedIn(basicUserInfo);
+        if (!logged) {
+            throw new UserNotLoggedInException(ResultStatEnum.USER_NOT_LOGGED_IN);
+        }
+
+        redisUtil.hDel(RedisConstants.KEY_LOGIN, basicUserInfo.getCellPhoneNum());
+
+    }
+
+    private boolean checkLoggedIn(BasicUserInfo basicUserInfo) {
+        String token = redisUtil.hGet(RedisConstants.KEY_LOGIN, basicUserInfo.getCellPhoneNum());
+        return !StringUtils.isEmpty(token);
+    }
+
 
 }

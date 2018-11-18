@@ -1,20 +1,17 @@
 package com.ranze.likechat.web.controller;
 
+import com.ranze.likechat.web.entity.viewobject.BasicUserInfo;
 import com.ranze.likechat.web.entity.viewobject.UserCreate;
-import com.ranze.likechat.web.exception.CellPhoneExistsException;
-import com.ranze.likechat.web.exception.ExceedQpsLimitException;
-import com.ranze.likechat.web.exception.WrongValidationCodeException;
+import com.ranze.likechat.web.entity.viewobject.UserLoginReq;
+import com.ranze.likechat.web.entity.viewobject.UserLoginResp;
+import com.ranze.likechat.web.exception.*;
 import com.ranze.likechat.web.result.Result;
-import com.ranze.likechat.web.entity.dataobject.UserInfo;
 import com.ranze.likechat.web.result.ResultStatEnum;
-import com.ranze.likechat.web.service.UserInfoServiceImpl;
+import com.ranze.likechat.web.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,20 +20,33 @@ import javax.validation.Valid;
 @Slf4j
 public class UserController {
     @Autowired
-    UserInfoServiceImpl userInfoServiceImpl;
+    UserServiceImpl userService;
 
     @PostMapping("/create")
     public Result<Void> create(@RequestBody @Valid UserCreate userCreate, BindingResult errorResult) {
         if (errorResult.hasErrors()) {
-            log.warn("UserInfo has error: {}", errorResult.getAllErrors());
+            log.warn("BasicUserInfo has error: {}", errorResult.getAllErrors());
             return Result.failure(ResultStatEnum.PARAMETER_ERROR);
         }
 
         try {
-            userInfoServiceImpl.createUser(userCreate);
+            userService.createUser(userCreate);
         } catch (CellPhoneExistsException | WrongValidationCodeException | ExceedQpsLimitException e) {
             return Result.failure(e.getResultStatEnum());
         }
+        return Result.success();
+    }
+
+    @PostMapping("/login")
+    public Result<UserLoginResp> login(@RequestBody @Valid UserLoginReq userLoginReq) {
+        UserLoginResp userLoginResp = userService.userLogin(userLoginReq);
+        return Result.success(userLoginResp);
+
+    }
+
+    @PostMapping("/logout")
+    public Result<Void> logout(@RequestBody @Valid BasicUserInfo basicUserInfo) {
+        userService.userLogout(basicUserInfo);
         return Result.success();
     }
 
