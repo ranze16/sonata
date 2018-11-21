@@ -7,13 +7,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.Date;
-import java.util.UUID;
 
 public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginProto.LoginResponse> {
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         LoginProto.LoginRequest.Builder loginRequestBuilder = LoginProto.LoginRequest.newBuilder();
-        loginRequestBuilder.setPhoneNum(UUID.randomUUID().toString());
+        loginRequestBuilder.setPhoneNum("17621652365");
         loginRequestBuilder.setPassword("ll");
 
         ctx.channel().writeAndFlush(loginRequestBuilder.build());

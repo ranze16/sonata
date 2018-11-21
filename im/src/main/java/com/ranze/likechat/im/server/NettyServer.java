@@ -11,14 +11,18 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
 
 @Component
-public class NettyServer {
+public class NettyServer implements BeanFactoryAware {
     private static final int PORT = 8000;
+    private BeanFactory beanFactory;
 
     @PostConstruct
     public void start() {
@@ -38,7 +42,7 @@ public class NettyServer {
 
                         nioSocketChannel.pipeline().addLast(new Spliter());
                         nioSocketChannel.pipeline().addLast(new PacketDecoder());
-                        nioSocketChannel.pipeline().addLast(new LoginRequestHandler());
+                        nioSocketChannel.pipeline().addLast(beanFactory.getBean(LoginRequestHandler.class));
                         nioSocketChannel.pipeline().addLast(new PacketEncoder());
                     }
                 });
@@ -54,5 +58,10 @@ public class NettyServer {
                 System.out.println("端口[" + port + "]绑定失败");
             }
         });
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 }

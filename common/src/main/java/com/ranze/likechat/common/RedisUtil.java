@@ -14,15 +14,22 @@ public class RedisUtil {
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
-    public <T> void vSet(String key, T value, long expire) {
-        redisTemplate.opsForValue().set(key, value);
-        if (expire != -1) {
-            redisTemplate.expire(key, expire, TimeUnit.SECONDS);
+    public <T> boolean vSet(String key, T value, long expire) {
+        boolean ret = false;
+        try {
+            redisTemplate.opsForValue().set(key, value);
+            if (expire != -1) {
+                redisTemplate.expire(key, expire, TimeUnit.SECONDS);
+            }
+            ret = true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return ret;
     }
 
-    public <T> void vSet(String key, T value) {
-        vSet(key, value, -1);
+    public <T> boolean vSet(String key, T value) {
+        return vSet(key, value, -1);
     }
 
     public <T> T vGet(String key) {
