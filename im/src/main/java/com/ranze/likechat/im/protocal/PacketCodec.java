@@ -19,12 +19,17 @@ public class PacketCodec {
     public static final PacketCodec INSTANCE = new PacketCodec();
 
     private final Map<Class<? extends AbstractMessage>, Byte> messageTypeMap;
+    private final Map<Byte, Class<? extends AbstractMessage>> typeMessageMap;
 
 
     private PacketCodec() {
         messageTypeMap = new HashMap<>();
         messageTypeMap.put(LoginProto.LoginRequest.class, LOGIN_REQUEST);
         messageTypeMap.put(LoginProto.LoginResponse.class, LOGIN_RESPONSE);
+
+        typeMessageMap = new HashMap<>();
+        typeMessageMap.put(LOGIN_REQUEST, LoginProto.LoginRequest.class);
+        typeMessageMap.put(LOGIN_RESPONSE, LoginProto.LoginResponse.class);
 
     }
 
@@ -47,16 +52,21 @@ public class PacketCodec {
         // 指令
         byte command = byteBuf.readByte();
 
+
         int length = byteBuf.readInt();
         byte[] bytes = new byte[length];
         byteBuf.readBytes(bytes);
 
-        return ProtoSerializer.deserialize(command, bytes);
+        return ProtoSerializer.deserialize(getTypeClass(command), bytes);
 
     }
 
     private Byte getCommand(Class<? extends AbstractMessage> clazz) {
         return messageTypeMap.get(clazz);
+    }
+
+    private Class<? extends AbstractMessage> getTypeClass(byte command) {
+        return typeMessageMap.get(command);
     }
 
 
