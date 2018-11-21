@@ -17,7 +17,7 @@ public class ProtoSerializer {
     static {
         processors = new HashMap<>();
         processors.put(LOGIN_REQUEST, new LoginRequestProcessor());
-        processors.put(LOGIN_RESPONSE, new LoginRequestProcessor());
+        processors.put(LOGIN_RESPONSE, new LoginResponseProcessor());
 
     }
 
