@@ -33,7 +33,8 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginProto.
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, LoginProto.LoginRequest loginRequest) {
         LoginProto.LoginResponse.Builder loginResponseBuilder = LoginProto.LoginResponse.newBuilder();
         if (valid(loginRequest)) {
-            boolean success = sessionUtil.setLoginState(loginRequest.getPhoneNum(), localIp(channelHandlerContext));
+            boolean success = sessionUtil.setLoginState(loginRequest.getPhoneNum(), localIp(channelHandlerContext),
+                    channelHandlerContext.channel());
             if (success) {
                 loginResponseBuilder.setCode(ResultEnum.SUCCESS.getCode());
                 loginResponseBuilder.setMessage(ResultEnum.SUCCESS.getMessage());

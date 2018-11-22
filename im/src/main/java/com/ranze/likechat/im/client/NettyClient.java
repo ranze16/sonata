@@ -2,10 +2,11 @@ package com.ranze.likechat.im.client;
 
 
 import com.ranze.likechat.im.client.handler.LoginResponseHandler;
+import com.ranze.likechat.im.client.handler.MessageResponseHandler;
 import com.ranze.likechat.im.codec.PacketDecoder;
 import com.ranze.likechat.im.codec.PacketEncoder;
 import com.ranze.likechat.im.codec.Spliter;
-import com.ranze.likechat.im.util.LoginUtil;
+import com.ranze.likechat.im.proto.LoginProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -39,6 +40,7 @@ public class NettyClient {
                         socketChannel.pipeline().addLast(new Spliter());
                         socketChannel.pipeline().addLast(new PacketDecoder());
                         socketChannel.pipeline().addLast(new LoginResponseHandler());
+                        socketChannel.pipeline().addLast(new MessageResponseHandler());
                         socketChannel.pipeline().addLast(new PacketEncoder());
                     }
                 });
@@ -49,9 +51,19 @@ public class NettyClient {
     public static void connect(final Bootstrap bootstrap, final String host, final int port, final int retry) {
         bootstrap.connect(host, port).addListener(future -> {
             if (future.isSuccess()) {
-                System.out.println(new Date() + ": 连接成功，启动控制台线程......");
+                System.out.println("---开始登录---");
+                System.out.print("账号：");
+                Scanner sc = new Scanner(System.in);
+                String userId = sc.nextLine();
+                System.out.print("密码：");
+                String password = sc.next();
+
+                LoginProto.LoginRequest.Builder loginRequestBuilder = LoginProto.LoginRequest.newBuilder();
+                loginRequestBuilder.setPhoneNum(userId);
+                loginRequestBuilder.setPassword(password);
+
                 Channel channel = ((ChannelFuture) future).channel();
-                startConsoleThread(channel);
+                channel.writeAndFlush(loginRequestBuilder.build());
             } else if (retry == 0) {
                 System.out.println("重试次数已用完，放弃连接！");
             } else {
@@ -63,16 +75,5 @@ public class NettyClient {
         });
     }
 
-    public static void startConsoleThread(Channel channel) {
-        new Thread(() -> {
-            while (!Thread.interrupted()) {
-                if (LoginUtil.hasLogin(channel)) {
-                    System.out.println("输入消息发送至服务端：");
-                    Scanner sc = new Scanner(System.in);
-                    String line = sc.nextLine();
 
-                }
-            }
-        }).start();
-    }
 }

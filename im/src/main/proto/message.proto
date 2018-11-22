@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "com.ranze.likechat.im.proto";
+option java_outer_classname = "MessageProto";
+
+message MessageRequest {
+    string to = 1;
+    string content = 2;
+}
+
+message MessageResponse {
+    string to = 1;
+    string content = 2;
+}
