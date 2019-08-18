@@ -1,5 +1,6 @@
 package com.ranze.likechat.web.service;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.ranze.likechat.web.cons.Constants;
 import com.ranze.likechat.web.cons.RedisConstants;
 import com.ranze.likechat.web.entity.dataobject.UserInfo;
@@ -36,20 +37,27 @@ public class UserServiceImpl implements UserService {
         String cellPhoneNum = userCreate.getCellPhoneNum();
         UserInfo user = userInfoMapper.selectByCellPhoneNum(cellPhoneNum);
         if (user != null) {
-            throw new CellPhoneExistsException(ResultStatEnum.CELL_PHONE_EXISTS);
+            throw new BusinessException(ResultStatEnum.CELL_PHONE_EXISTS);
         }
 
         String redisKey = "create_user:" + cellPhoneNum;
         if (userCreate.getValidationCode() == 0) {
             int code = (int) ((Math.random() * 9 + 1) * 100000);
             long startSend = System.currentTimeMillis();
-            boolean sendSuccess = SmsUtil.sendValidationCode(cellPhoneNum, code + "");
-            log.info("Time for send validationCode: {}", System.currentTimeMillis() - startSend);
+            boolean sendSuccess = false;
+            try {
+                sendSuccess = SmsUtil.sendValidationCode(cellPhoneNum, code + "");
+                log.info("Time for send validationCode: {}", System.currentTimeMillis() - startSend);
+            } catch (ExceedSmsLimitException e) {
+                throw new BusinessException(ResultStatEnum.EXCEED_QPS_LIMIT);
+            } catch (ClientException e) {
+                throw new BusinessException(ResultStatEnum.INNER_ERROR);
+            }
 
             if (sendSuccess) {
                 redisUtil.vSet(redisKey, code, Constants.FIVE_MINUTE_IN_SECONDS);
             } else {
-                throw new InnerErrorException(ResultStatEnum.INNER_ERROR);
+                throw new BusinessException(ResultStatEnum.INNER_ERROR);
             }
 
         } else {
@@ -65,10 +73,10 @@ public class UserServiceImpl implements UserService {
                 userInfo.setId(snowflakeIdWorker.nextId());
                 int insertCount = userInfoMapper.insertSelective(userInfo);
                 if (insertCount <= 0) {
-                    throw new CellPhoneExistsException(ResultStatEnum.CELL_PHONE_EXISTS);
+                    throw new BusinessException(ResultStatEnum.CELL_PHONE_EXISTS);
                 }
             } else {
-                throw new WrongValidationCodeException(ResultStatEnum.WRONG_VALIDATION_CODE);
+                throw new BusinessException(ResultStatEnum.WRONG_VALIDATION_CODE);
             }
 
         }
@@ -81,11 +89,11 @@ public class UserServiceImpl implements UserService {
         String cellPhoneNum = userLoginReq.getCellPhoneNum();
         UserInfo user = userInfoMapper.selectByCellPhoneNum(cellPhoneNum);
         if (user == null) {
-            throw new UserNotExistsException(ResultStatEnum.USER_NOT_EXISTS);
+            throw new BusinessException(ResultStatEnum.USER_NOT_EXISTS);
         }
 
         if (!user.getPassword().equals(userLoginReq.getPassword())) {
-            throw new UserNotExistsException(ResultStatEnum.USER_NOT_EXISTS);
+            throw new BusinessException(ResultStatEnum.USER_NOT_EXISTS);
         }
 
         String usedToken = redisUtil.hGet(RedisConstants.KEY_LOGIN, cellPhoneNum);
@@ -103,7 +111,7 @@ public class UserServiceImpl implements UserService {
     public void userLogout(BasicUserInfo basicUserInfo) {
         boolean logged = checkLoggedIn(basicUserInfo);
         if (!logged) {
-            throw new UserNotLoggedInException(ResultStatEnum.USER_NOT_LOGGED_IN);
+            throw new BusinessException(ResultStatEnum.USER_NOT_LOGGED_IN);
         }
 
         redisUtil.hDel(RedisConstants.KEY_LOGIN, basicUserInfo.getCellPhoneNum());

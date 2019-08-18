@@ -18,10 +18,10 @@ public class GlobalExceptionHandler {
         return Result.failure(ResultStatEnum.INNER_ERROR);
     }
 
-    @ExceptionHandler(value = BaseException.class)
+    @ExceptionHandler(value = BusinessException.class)
     @ResponseBody
-    public Result<Void> handle(BaseException e) {
-        log.warn("Handle BaseException: " + e.getMessage());
+    public Result<Void> handle(BusinessException e) {
+        log.warn("Handle BusinessException: " + e.getMessage());
         return Result.failure(e.getResultStatEnum());
     }
 

@@ -2,19 +2,11 @@ package com.ranze.likechat.web.exception;
 
 import com.ranze.likechat.web.result.ResultStatEnum;
 
-public class BaseException extends RuntimeException {
+public class BusinessException extends RuntimeException {
     protected ResultStatEnum resultStatEnum;
 
-    public BaseException(ResultStatEnum resultStatEnum) {
+    public BusinessException(ResultStatEnum resultStatEnum) {
         this.resultStatEnum = resultStatEnum;
-    }
-
-    public BaseException(String message) {
-        super(message);
-    }
-
-    public BaseException(String message, Throwable cause) {
-        super(message, cause);
     }
 
     public ResultStatEnum getResultStatEnum() {

@@ -7,7 +7,7 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import com.ranze.likechat.web.exception.ExceedQpsLimitException;
+import com.ranze.likechat.web.exception.ExceedSmsLimitException;
 import com.ranze.likechat.web.result.ResultStatEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,18 +21,18 @@ public class SmsUtil {
     static final String accessKeyId = "LTAIZU58JtcSzcmT";
     static final String accessKeySecret = "cAqbwE3nkrj7hVicYD6T91sumCsgT5";
 
-    public static boolean sendValidationCode(String phoneNum, String code) throws ExceedQpsLimitException {
+    public static boolean sendValidationCode(String phoneNum, String code) throws ExceedSmsLimitException, ClientException {
         try {
             SendSmsResponse sendSmsResponse = sendSms(phoneNum, "SMS_150174074", code);
             String respCode = sendSmsResponse.getCode();
             if (respCode.equals("OK")) {
                 return true;
             } else if (respCode.equals("isv.BUSINESS_LIMIT_CONTROL")) {
-                throw new ExceedQpsLimitException(ResultStatEnum.EXCEED_QPS_LIMIT);
+                throw new ExceedSmsLimitException(ResultStatEnum.EXCEED_QPS_LIMIT);
             }
         } catch (ClientException e) {
-            e.printStackTrace();
             log.warn("SendValidationCode exception: {}", e.getMessage());
+            throw e;
         }
         return false;
     }
