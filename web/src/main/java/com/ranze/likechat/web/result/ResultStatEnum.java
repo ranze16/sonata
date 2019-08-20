@@ -8,7 +8,9 @@ public enum ResultStatEnum {
     WRONG_VALIDATION_CODE(101, "验证码错误"),
     EXCEED_QPS_LIMIT(102, "太频繁了，请稍后再试"),
     USER_NOT_EXISTS(103, "用户不存在或者密码错误"),
-    USER_NOT_LOGGED_IN(104, "未登录");
+    USER_NOT_LOGGED_IN(104, "未登录"),
+    TOKEN_NOT_VALID(105, "token 不合法"),
+    TOKEN_EXPIRE(106, "token 过期");
 
     private int state;
 

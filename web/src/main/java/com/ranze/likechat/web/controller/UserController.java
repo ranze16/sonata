@@ -1,5 +1,6 @@
 package com.ranze.likechat.web.controller;
 
+import com.ranze.likechat.web.entity.dataobject.UserInfo;
 import com.ranze.likechat.web.entity.viewobject.BasicUserInfo;
 import com.ranze.likechat.web.entity.viewobject.UserCreate;
 import com.ranze.likechat.web.entity.viewobject.UserLoginReq;
@@ -42,10 +43,16 @@ public class UserController {
 
     }
 
-    @PostMapping("/logout")
-    public Result<Void> logout(@RequestBody @Valid BasicUserInfo basicUserInfo) {
-        userService.userLogout(basicUserInfo);
-        return Result.success();
+//    @PostMapping("/logout")
+//    public Result<Void> logout(@RequestBody @Valid BasicUserInfo basicUserInfo) {
+//        userService.userLogout(basicUserInfo);
+//        return Result.success();
+//    }
+
+    @PostMapping("/info")
+    public Result<UserInfo> userInfo(@RequestBody @Valid BasicUserInfo basicUserInfo) {
+        UserInfo userInfo = userService.userInfo(basicUserInfo);
+        return Result.success(userInfo);
     }
 
 }

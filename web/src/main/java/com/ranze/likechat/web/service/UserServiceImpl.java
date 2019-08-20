@@ -1,6 +1,7 @@
 package com.ranze.likechat.web.service;
 
 import com.aliyuncs.exceptions.ClientException;
+import com.ranze.likechat.common.JWTResult;
 import com.ranze.likechat.common.JWTUtil;
 import com.ranze.likechat.common.RedisUtil;
 import com.ranze.likechat.web.cons.Constants;
@@ -17,6 +18,7 @@ import com.ranze.likechat.web.result.ResultStatEnum;
 import com.ranze.likechat.web.util.EnvironmentUtil;
 import com.ranze.likechat.web.util.SmsUtil;
 import com.ranze.likechat.web.util.SnowflakeIdWorker;
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -127,6 +129,26 @@ public class UserServiceImpl implements UserService {
 
         redisUtil.hDel(RedisConstants.KEY_LOGIN, basicUserInfo.getCellPhoneNum());
 
+    }
+
+    public UserInfo userInfo(BasicUserInfo basicUserInfo) {
+        JWTResult tokenStatus = JWTUtil.checkToken(basicUserInfo.getToken());
+        if (!tokenStatus.isValid()) {
+            ResultStatEnum resultStatEnum = null;
+            if (tokenStatus.getCode() == JWTResult.EXPIRED) {
+                resultStatEnum = ResultStatEnum.TOKEN_EXPIRE;
+            } else if (tokenStatus.getCode() == JWTResult.NO_AUTH) {
+                resultStatEnum = ResultStatEnum.TOKEN_NOT_VALID;
+            }
+            throw new BusinessException(resultStatEnum);
+        } else {
+
+            UserInfo user = userInfoMapper.selectByCellPhoneNum(basicUserInfo.getCellPhoneNum());
+            if (user == null) {
+                throw new BusinessException(ResultStatEnum.USER_NOT_EXISTS);
+            }
+            return user;
+        }
     }
 
     private boolean checkLoggedIn(BasicUserInfo basicUserInfo) {
