@@ -1,6 +1,7 @@
 package com.ranze.likechat.web.service;
 
 import com.aliyuncs.exceptions.ClientException;
+import com.ranze.likechat.common.JWTUtil;
 import com.ranze.likechat.common.RedisUtil;
 import com.ranze.likechat.web.cons.Constants;
 import com.ranze.likechat.web.cons.RedisConstants;
@@ -16,10 +17,8 @@ import com.ranze.likechat.web.result.ResultStatEnum;
 import com.ranze.likechat.web.util.EnvironmentUtil;
 import com.ranze.likechat.web.util.SmsUtil;
 import com.ranze.likechat.web.util.SnowflakeIdWorker;
-import com.ranze.likechat.web.util.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -113,7 +112,7 @@ public class UserServiceImpl implements UserService {
             return new UserLoginResp(usedToken);
         }
 
-        String token = UUIDUtil.getUUID();
+        String token = JWTUtil.getToken(user.getId() + "", 5);
         redisUtil.hSet(RedisConstants.KEY_LOGIN, cellPhoneNum, token);
         return new UserLoginResp(token);
 
