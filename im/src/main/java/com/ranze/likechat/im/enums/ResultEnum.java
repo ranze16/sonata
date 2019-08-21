@@ -3,7 +3,8 @@ package com.ranze.likechat.im.enums;
 public enum ResultEnum {
     SUCCESS(0, "OK"),
     INNER_ERROR(1, "Inner error"),
-    WRONG_USER_PASSWORD(100, "错误的用户名或密码");
+    WRONG_USER_PASSWORD(100, "错误的用户名或密码"),
+    USER_OFFLINE(101, "用户不在线");
 
     private int code;
 

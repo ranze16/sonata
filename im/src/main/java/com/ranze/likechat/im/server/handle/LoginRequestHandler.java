@@ -40,6 +40,7 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginProto.
                 loginResponseBuilder.setMessage(ResultEnum.SUCCESS.getMessage());
                 log.info("用户 '{}' 登录成功", loginRequest.getPhoneNum());
 
+                loginUtil.markAsLogin(channelHandlerContext.channel());
                 loginUtil.setUserId(channelHandlerContext.channel(), loginRequest.getPhoneNum());
 
                 channelHandlerContext.channel().writeAndFlush(loginResponseBuilder.build());
@@ -60,6 +61,7 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginProto.
     }
 
     private boolean valid(LoginProto.LoginRequest loginRequest) {
+        // TODO: 2019/8/21 校验登录状态
         return true;
     }
 

@@ -1,5 +1,6 @@
 package com.ranze.likechat.im.server.handle;
 
+import com.ranze.likechat.im.enums.ResultEnum;
 import com.ranze.likechat.im.proto.MessageProto;
 import com.ranze.likechat.im.util.LoginUtil;
 import com.ranze.likechat.im.util.SessionUtil;
@@ -26,19 +27,24 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessagePr
         String userId = loginUtil.getUserId(ctx.channel());
         log.info("Receive from {}, message = {}", userId, msg.getContent());
 
-        MessageProto.MessageResponse.Builder responseBuilder = MessageProto.MessageResponse.newBuilder();
-        responseBuilder.setContent(msg.getContent());
 
         Channel channel = sessionUtil.getChannel(msg.getTo());
         if (channel != null) {
             log.info("User '{}' stay in this server", msg.getTo());
-            channel.writeAndFlush(responseBuilder.build());
+            //发送消息给对方
+//            channel.writeAndFlush(responseBuilder.build());
         } else {
             String serverIp = sessionUtil.getServerIp(msg.getTo());
             if (StringUtils.isEmpty(serverIp)) {
                 log.info("User '{}' is offline", msg.getTo());
+                MessageProto.MessageResponse.Builder responseBuilder = MessageProto.MessageResponse.newBuilder();
+                responseBuilder.setCode(ResultEnum.USER_OFFLINE.getCode());
+                responseBuilder.setContent(ResultEnum.USER_OFFLINE.getMessage());
+                ctx.channel().writeAndFlush(responseBuilder.build());
+            } else {
+                log.info("User '{}' stay in server '{}'", msg.getTo(), serverIp);
+                // 通过rpc发送消息给对方
             }
-            log.info("User '{}' stay in server '{}'", msg.getTo(), serverIp);
         }
     }
 }
